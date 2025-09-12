@@ -12,7 +12,7 @@ import (
 func RunMigrations() {
 	dbURL := os.Getenv("DATABASE_URL")
 
-	m, err := migrate.New("file://../migrations", dbURL)
+	m, err := migrate.New("file://migrations", dbURL)
 
 	if err != nil {
 		log.Fatalf("failed to initialize migrations: %v", err)

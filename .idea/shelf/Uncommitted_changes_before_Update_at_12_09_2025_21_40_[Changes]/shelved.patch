@@ -1,0 +1,463 @@
+Index: config/migration.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package config\r\n\r\nimport (\r\n\t\"log\"\r\n\t\"os\"\r\n\r\n\t\"github.com/golang-migrate/migrate/v4\"\r\n\t_ \"github.com/golang-migrate/migrate/v4/database/postgres\"\r\n\t_ \"github.com/golang-migrate/migrate/v4/source/file\"\r\n)\r\n\r\nfunc RunMigrations() {\r\n\tdbURL := os.Getenv(\"DATABASE_URL\")\r\n\r\n\tm, err := migrate.New(\"file://../migrations\", dbURL)\r\n\r\n\tif err != nil {\r\n\t\tlog.Fatalf(\"failed to initialize migrations: %v\", err)\r\n\t}\r\n\r\n\terr = m.Up()\r\n\tif err != nil && err.Error() != \"no change\" {\r\n\t\tlog.Fatalf(\"failed to apply migrations: %v\", err)\r\n\t}\r\n\r\n\tlog.Println(\"✅ Migrations applied successfully\")\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/config/migration.go b/config/migration.go
+--- a/config/migration.go	(revision 37e4f55c5f34974011f82619c679028bcaca8514)
++++ b/config/migration.go	(date 1757686278578)
+@@ -12,7 +12,7 @@
+ func RunMigrations() {
+ 	dbURL := os.Getenv("DATABASE_URL")
+ 
+-	m, err := migrate.New("file://../migrations", dbURL)
++	m, err := migrate.New("file://migrations", dbURL)
+ 
+ 	if err != nil {
+ 		log.Fatalf("failed to initialize migrations: %v", err)
+Index: internal/service_domain/usecase.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package service_domain\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/internal/service_domain/usecase.go b/internal/service_domain/usecase.go
+--- a/internal/service_domain/usecase.go	(revision 37e4f55c5f34974011f82619c679028bcaca8514)
++++ b/internal/service_domain/usecase.go	(date 1757689583140)
+@@ -1,1 +1,51 @@
+ package service_domain
++
++import (
++	"context"
++	"project/internal/domain"
++	"project/repository"
++
++	"github.com/google/uuid"
++)
++
++type DepartmentService interface {
++	Create(ctx context.Context, name string) (*domain.Department, error)
++	GetAll(ctx context.Context) ([]domain.Department, error)
++	GetByID(ctx context.Context, id uuid.UUID) (*domain.Department, error)
++	Update(ctx context.Context, id uuid.UUID, name string) error
++	Delete(ctx context.Context, id uuid.UUID) error
++}
++
++type departmentService struct {
++	repo repository.DepartmentRepository
++}
++
++func NewDepartmentService(repo repository.DepartmentRepository) DepartmentService {
++	return &departmentService{repo: repo}
++}
++
++func (s *departmentService) Create(ctx context.Context, name string) (*domain.Department, error) {
++	dept := &domain.Department{
++		ID:   uuid.New(),
++		Name: name,
++	}
++	err := s.repo.Create(ctx, dept)
++	return dept, err
++}
++
++func (s *departmentService) GetAll(ctx context.Context) ([]domain.Department, error) {
++	return s.repo.GetAll(ctx)
++}
++
++func (s *departmentService) GetByID(ctx context.Context, id uuid.UUID) (*domain.Department, error) {
++	return s.repo.GetByID(ctx, id)
++}
++
++func (s *departmentService) Update(ctx context.Context, id uuid.UUID, name string) error {
++	dept := &domain.Department{ID: id, Name: name}
++	return s.repo.Update(ctx, dept)
++}
++
++func (s *departmentService) Delete(ctx context.Context, id uuid.UUID) error {
++	return s.repo.Delete(ctx, id)
++}
+Index: controllers/department_controller.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package controllers\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/controllers/department_controller.go b/controllers/department_controller.go
+--- a/controllers/department_controller.go	(revision 37e4f55c5f34974011f82619c679028bcaca8514)
++++ b/controllers/department_controller.go	(date 1757689861986)
+@@ -1,1 +1,91 @@
+ package controllers
++
++import (
++	"encoding/json"
++	"net/http"
++	service "project/internal/service_domain"
++
++	"github.com/google/uuid"
++	"github.com/gorilla/mux"
++)
++
++type DepartmentHandler struct {
++	service service.DepartmentService
++}
++
++func NewDepartmentHandler(service service.DepartmentService) *DepartmentHandler {
++	return &DepartmentHandler{service: service}
++}
++
++func (h *DepartmentHandler) Create(w http.ResponseWriter, r *http.Request) {
++	var input struct {
++		Name string `json:"name"`
++	}
++	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
++		http.Error(w, err.Error(), http.StatusBadRequest)
++		return
++	}
++
++	dept, err := h.service.Create(r.Context(), input.Name)
++	if err != nil {
++		http.Error(w, err.Error(), http.StatusInternalServerError)
++		return
++	}
++	json.NewEncoder(w).Encode(dept)
++}
++
++func (h *DepartmentHandler) GetAll(w http.ResponseWriter, r *http.Request) {
++	depts, err := h.service.GetAll(r.Context())
++	if err != nil {
++		http.Error(w, err.Error(), http.StatusInternalServerError)
++		return
++	}
++	json.NewEncoder(w).Encode(depts)
++}
++
++func (h *DepartmentHandler) GetByID(w http.ResponseWriter, r *http.Request) {
++	id, err := uuid.Parse(mux.Vars(r)["id"])
++	if err != nil {
++		http.Error(w, "invalid UUID", http.StatusBadRequest)
++		return
++	}
++	dept, err := h.service.GetByID(r.Context(), id)
++	if err != nil {
++		http.Error(w, err.Error(), http.StatusNotFound)
++		return
++	}
++	json.NewEncoder(w).Encode(dept)
++}
++
++func (h *DepartmentHandler) Update(w http.ResponseWriter, r *http.Request) {
++	id, err := uuid.Parse(mux.Vars(r)["id"])
++	if err != nil {
++		http.Error(w, "invalid UUID", http.StatusBadRequest)
++		return
++	}
++	var input struct {
++		Name string `json:"name"`
++	}
++	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
++		http.Error(w, err.Error(), http.StatusBadRequest)
++		return
++	}
++	if err := h.service.Update(r.Context(), id, input.Name); err != nil {
++		http.Error(w, err.Error(), http.StatusInternalServerError)
++		return
++	}
++	w.WriteHeader(http.StatusNoContent)
++}
++
++func (h *DepartmentHandler) Delete(w http.ResponseWriter, r *http.Request) {
++	id, err := uuid.Parse(mux.Vars(r)["id"])
++	if err != nil {
++		http.Error(w, "invalid UUID", http.StatusBadRequest)
++		return
++	}
++	if err := h.service.Delete(r.Context(), id); err != nil {
++		http.Error(w, err.Error(), http.StatusInternalServerError)
++		return
++	}
++	w.WriteHeader(http.StatusNoContent)
++}
+Index: migrations/000001_init_schema.up.sql
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>CREATE TABLE IF NOT EXISTS users (\r\n                                     id UUID PRIMARY KEY,\r\n                                     name TEXT NOT NULL,\r\n                                     email TEXT UNIQUE NOT NULL,\r\n                                     password TEXT NOT NULL,\r\n                                     role TEXT NOT NULL\r\n);\r\n\r\nCREATE TABLE IF NOT EXISTS products (\r\n                                        id UUID PRIMARY KEY,\r\n                                        name TEXT NOT NULL,\r\n                                        price NUMERIC(10, 2) NOT NULL,\r\n    quantity INTEGER NOT NULL\r\n    );\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/migrations/000001_init_schema.up.sql b/migrations/000001_init_schema.up.sql
+--- a/migrations/000001_init_schema.up.sql	(revision 37e4f55c5f34974011f82619c679028bcaca8514)
++++ b/migrations/000001_init_schema.up.sql	(date 1757686376166)
+@@ -1,14 +1,43 @@
+-CREATE TABLE IF NOT EXISTS users (
+-                                     id UUID PRIMARY KEY,
+-                                     name TEXT NOT NULL,
+-                                     email TEXT UNIQUE NOT NULL,
+-                                     password TEXT NOT NULL,
+-                                     role TEXT NOT NULL
++CREATE TABLE departments (
++                             id UUID PRIMARY KEY,
++                             name TEXT NOT NULL
++);
++
++CREATE TABLE positions (
++                           id UUID PRIMARY KEY,
++                           title TEXT NOT NULL,
++                           salary NUMERIC(12,2) NOT NULL
++);
++
++CREATE TABLE employees (
++                           id UUID PRIMARY KEY,
++                           first_name TEXT NOT NULL,
++                           last_name TEXT NOT NULL,
++                           middle_name TEXT,
++                           department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
++                           position_id UUID REFERENCES positions(id) ON DELETE SET NULL
++);
++
++CREATE TABLE contracts (
++                           id UUID PRIMARY KEY,
++                           employee_id UUID REFERENCES employees(id) ON DELETE CASCADE,
++                           start_date DATE NOT NULL,
++                           end_date DATE,
++                           type TEXT NOT NULL
+ );
+ 
+-CREATE TABLE IF NOT EXISTS products (
+-                                        id UUID PRIMARY KEY,
+-                                        name TEXT NOT NULL,
+-                                        price NUMERIC(10, 2) NOT NULL,
+-    quantity INTEGER NOT NULL
+-    );
++CREATE TABLE orders (
++                        id UUID PRIMARY KEY,
++                        number TEXT NOT NULL,
++                        date DATE NOT NULL,
++                        type TEXT NOT NULL,
++                        employee_id UUID REFERENCES employees(id) ON DELETE CASCADE
++);
++
++CREATE TABLE documents (
++                           id UUID PRIMARY KEY,
++                           name TEXT NOT NULL,
++                           content TEXT NOT NULL,
++                           created_at TIMESTAMP NOT NULL DEFAULT now(),
++                           version INT NOT NULL DEFAULT 1
++);
+Index: internal/domain/department.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package domain\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/internal/domain/department.go b/internal/domain/department.go
+--- a/internal/domain/department.go	(revision 37e4f55c5f34974011f82619c679028bcaca8514)
++++ b/internal/domain/department.go	(date 1757687545002)
+@@ -1,1 +1,8 @@
+ package domain
++
++import "github.com/google/uuid"
++
++type Department struct {
++	ID   uuid.UUID `json:"id"`
++	Name string    `json:"name"`
++}
+Index: routes/routes.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package routes\r\n\r\nimport (\r\n\t\"net/http\"\r\n\r\n\t\"github.com/gorilla/mux\"\r\n\t\"github.com/jackc/pgx/v5/pgxpool\"\r\n\r\n\t\"project/controllers\"\r\n\t\"project/internal/auth\"\r\n\t\"project/internal/product\"\r\n\t\"project/internal/user\"\r\n\t\"project/middlewares\"\r\n)\r\n\r\nfunc SetupRoutes(db *pgxpool.Pool) *mux.Router {\r\n\tr := mux.NewRouter()\r\n\r\n\t// Usecase-инстансы\r\n\tuserUseCase := user.NewUserUseCase(db)\r\n\tproductUseCase := product.NewProductUseCase(db)\r\n\tauthUseCase := auth.NewAuthUseCase(db)\r\n\r\n\t// Handlers\r\n\tuserHandler := controllers.NewUserHandler(userUseCase)\r\n\tproductHandler := controllers.NewProductHandler(productUseCase)\r\n\tauthHandler := controllers.NewAuthHandler(authUseCase)\r\n\r\n\t// Auth routes\r\n\tr.Handle(\"/auth/login\", http.HandlerFunc(authHandler.Login)).Methods(\"POST\")\r\n\tr.Handle(\"/auth/register\", http.HandlerFunc(authHandler.Register)).Methods(\"POST\")\r\n\tr.Handle(\"/auth/refresh\", Refresh(http.HandlerFunc(authHandler.Refresh))).Methods(\"POST\")\r\n\r\n\t// User routes (только админ может видеть список и менять пользователей)\r\n\tr.Handle(\"/users\", AdminProtected(http.HandlerFunc(userHandler.GetUsers))).Methods(\"GET\")\r\n\tr.Handle(\"/users/{id}\", Protected(http.HandlerFunc(userHandler.GetUserById))).Methods(\"GET\")\r\n\tr.Handle(\"/users/{id}\", AdminProtected(http.HandlerFunc(userHandler.UpdateUser))).Methods(\"PUT\")\r\n\tr.Handle(\"/users/{id}\", AdminProtected(http.HandlerFunc(userHandler.DeleteUser))).Methods(\"DELETE\")\r\n\r\n\t// Product routes\r\n\tr.Handle(\"/products\", Protected(http.HandlerFunc(productHandler.GetProducts))).Methods(\"GET\")\r\n\tr.Handle(\"/products/{id}\", Protected(http.HandlerFunc(productHandler.GetProductByID))).Methods(\"GET\")\r\n\tr.Handle(\"/products\", AdminProtected(http.HandlerFunc(productHandler.CreateProduct))).Methods(\"POST\")\r\n\tr.Handle(\"/products/{id}\", AdminProtected(http.HandlerFunc(productHandler.UpdateProduct))).Methods(\"PUT\")\r\n\tr.Handle(\"/products/{id}\", AdminProtected(http.HandlerFunc(productHandler.DeleteProduct))).Methods(\"DELETE\")\r\n\r\n\treturn r\r\n}\r\n\r\n// Middleware обёртки\r\nfunc Refresh(h http.HandlerFunc) http.Handler {\r\n\treturn middlewares.RefreshMiddleware(h)\r\n}\r\n\r\nfunc Protected(h http.HandlerFunc) http.Handler {\r\n\treturn middlewares.AuthMiddleware(h)\r\n}\r\n\r\nfunc AdminProtected(h http.HandlerFunc) http.Handler {\r\n\treturn middlewares.OnlyAdmin(middlewares.AuthMiddleware(h))\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/routes/routes.go b/routes/routes.go
+--- a/routes/routes.go	(revision 37e4f55c5f34974011f82619c679028bcaca8514)
++++ b/routes/routes.go	(date 1757691635582)
+@@ -2,47 +2,57 @@
+ 
+ import (
+ 	"net/http"
++	"project/controllers"
++	service "project/internal/service_domain"
++	"project/repository"
+ 
+ 	"github.com/gorilla/mux"
+ 	"github.com/jackc/pgx/v5/pgxpool"
+ 
+-	"project/controllers"
+-	"project/internal/auth"
+-	"project/internal/product"
+-	"project/internal/user"
+ 	"project/middlewares"
+ )
+ 
+ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
+ 	r := mux.NewRouter()
+ 
+-	// Usecase-инстансы
+-	userUseCase := user.NewUserUseCase(db)
+-	productUseCase := product.NewProductUseCase(db)
+-	authUseCase := auth.NewAuthUseCase(db)
+-
+-	// Handlers
+-	userHandler := controllers.NewUserHandler(userUseCase)
+-	productHandler := controllers.NewProductHandler(productUseCase)
+-	authHandler := controllers.NewAuthHandler(authUseCase)
++	// Department
++	deptRepo := repository.NewDepartmentRepository(db)
++	deptService := service.NewDepartmentService(deptRepo)
++	deptHandler := controllers.NewDepartmentHandler(deptService)
+ 
+-	// Auth routes
+-	r.Handle("/auth/login", http.HandlerFunc(authHandler.Login)).Methods("POST")
+-	r.Handle("/auth/register", http.HandlerFunc(authHandler.Register)).Methods("POST")
+-	r.Handle("/auth/refresh", Refresh(http.HandlerFunc(authHandler.Refresh))).Methods("POST")
++	r.HandleFunc("/departments", deptHandler.Create).Methods("POST")
++	r.HandleFunc("/departments", deptHandler.GetAll).Methods("GET")
++	r.HandleFunc("/departments/{id}", deptHandler.GetByID).Methods("GET")
++	r.HandleFunc("/departments/{id}", deptHandler.Update).Methods("PUT")
++	r.HandleFunc("/departments/{id}", deptHandler.Delete).Methods("DELETE")
+ 
+-	// User routes (только админ может видеть список и менять пользователей)
+-	r.Handle("/users", AdminProtected(http.HandlerFunc(userHandler.GetUsers))).Methods("GET")
+-	r.Handle("/users/{id}", Protected(http.HandlerFunc(userHandler.GetUserById))).Methods("GET")
+-	r.Handle("/users/{id}", AdminProtected(http.HandlerFunc(userHandler.UpdateUser))).Methods("PUT")
+-	r.Handle("/users/{id}", AdminProtected(http.HandlerFunc(userHandler.DeleteUser))).Methods("DELETE")
+-
+-	// Product routes
+-	r.Handle("/products", Protected(http.HandlerFunc(productHandler.GetProducts))).Methods("GET")
+-	r.Handle("/products/{id}", Protected(http.HandlerFunc(productHandler.GetProductByID))).Methods("GET")
+-	r.Handle("/products", AdminProtected(http.HandlerFunc(productHandler.CreateProduct))).Methods("POST")
+-	r.Handle("/products/{id}", AdminProtected(http.HandlerFunc(productHandler.UpdateProduct))).Methods("PUT")
+-	r.Handle("/products/{id}", AdminProtected(http.HandlerFunc(productHandler.DeleteProduct))).Methods("DELETE")
++	//// Usecase-инстансы
++	//userUseCase := user.NewUserUseCase(db)
++	//productUseCase := product.NewProductUseCase(db)
++	//authUseCase := auth.NewAuthUseCase(db)
++	//
++	//// Handlers
++	//userHandler := controllers.NewUserHandler(userUseCase)
++	//productHandler := controllers.NewProductHandler(productUseCase)
++	//authHandler := controllers.NewAuthHandler(authUseCase)
++	//
++	//// Auth routes
++	//r.Handle("/auth/login", http.HandlerFunc(authHandler.Login)).Methods("POST")
++	//r.Handle("/auth/register", http.HandlerFunc(authHandler.Register)).Methods("POST")
++	//r.Handle("/auth/refresh", Refresh(http.HandlerFunc(authHandler.Refresh))).Methods("POST")
++	//
++	//// User routes (только админ может видеть список и менять пользователей)
++	//r.Handle("/users", AdminProtected(http.HandlerFunc(userHandler.GetUsers))).Methods("GET")
++	//r.Handle("/users/{id}", Protected(http.HandlerFunc(userHandler.GetUserById))).Methods("GET")
++	//r.Handle("/users/{id}", AdminProtected(http.HandlerFunc(userHandler.UpdateUser))).Methods("PUT")
++	//r.Handle("/users/{id}", AdminProtected(http.HandlerFunc(userHandler.DeleteUser))).Methods("DELETE")
++	//
++	//// Product routes
++	//r.Handle("/products", Protected(http.HandlerFunc(productHandler.GetProducts))).Methods("GET")
++	//r.Handle("/products/{id}", Protected(http.HandlerFunc(productHandler.GetProductByID))).Methods("GET")
++	//r.Handle("/products", AdminProtected(http.HandlerFunc(productHandler.CreateProduct))).Methods("POST")
++	//r.Handle("/products/{id}", AdminProtected(http.HandlerFunc(productHandler.UpdateProduct))).Methods("PUT")
++	//r.Handle("/products/{id}", AdminProtected(http.HandlerFunc(productHandler.DeleteProduct))).Methods("DELETE")
+ 
+ 	return r
+ }
+Index: migrations/000001_init_schema.down.sql
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>DROP TABLE IF EXISTS products;\r\nDROP TABLE IF EXISTS users;\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/migrations/000001_init_schema.down.sql b/migrations/000001_init_schema.down.sql
+--- a/migrations/000001_init_schema.down.sql	(revision 37e4f55c5f34974011f82619c679028bcaca8514)
++++ b/migrations/000001_init_schema.down.sql	(date 1757686386583)
+@@ -1,2 +1,6 @@
+-DROP TABLE IF EXISTS products;
+-DROP TABLE IF EXISTS users;
++DROP TABLE IF EXISTS documents;
++DROP TABLE IF EXISTS orders;
++DROP TABLE IF EXISTS contracts;
++DROP TABLE IF EXISTS employees;
++DROP TABLE IF EXISTS positions;
++DROP TABLE IF EXISTS departments;
+Index: repository/department_repository.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package repository\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/repository/department_repository.go b/repository/department_repository.go
+--- a/repository/department_repository.go	(revision 37e4f55c5f34974011f82619c679028bcaca8514)
++++ b/repository/department_repository.go	(date 1757687712211)
+@@ -1,1 +1,68 @@
+ package repository
++
++import (
++	"context"
++	"project/internal/domain"
++
++	"github.com/google/uuid"
++	"github.com/jackc/pgx/v5/pgxpool"
++)
++
++type DepartmentRepository interface {
++	Create(ctx context.Context, dept *domain.Department) error
++	GetAll(ctx context.Context) ([]domain.Department, error)
++	GetByID(ctx context.Context, id uuid.UUID) (*domain.Department, error)
++	Update(ctx context.Context, dept *domain.Department) error
++	Delete(ctx context.Context, id uuid.UUID) error
++}
++
++type departmentRepository struct {
++	db *pgxpool.Pool
++}
++
++func NewDepartmentRepository(db *pgxpool.Pool) DepartmentRepository {
++	return &departmentRepository{db: db}
++}
++
++func (r *departmentRepository) Create(ctx context.Context, dept *domain.Department) error {
++	_, err := r.db.Exec(ctx, "INSERT INTO departments (id, name) VALUES ($1, $2)", dept.ID, dept.Name)
++	return err
++}
++
++func (r *departmentRepository) GetAll(ctx context.Context) ([]domain.Department, error) {
++	rows, err := r.db.Query(ctx, "SELECT id, name FROM departments")
++	if err != nil {
++		return nil, err
++	}
++	defer rows.Close()
++
++	var departments []domain.Department
++	for rows.Next() {
++		var d domain.Department
++		if err := rows.Scan(&d.ID, &d.Name); err != nil {
++			return nil, err
++		}
++		departments = append(departments, d)
++	}
++	return departments, nil
++}
++
++func (r *departmentRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Department, error) {
++	row := r.db.QueryRow(ctx, "SELECT id, name FROM departments WHERE id=$1", id)
++
++	var d domain.Department
++	if err := row.Scan(&d.ID, &d.Name); err != nil {
++		return nil, err
++	}
++	return &d, nil
++}
++
++func (r *departmentRepository) Update(ctx context.Context, dept *domain.Department) error {
++	_, err := r.db.Exec(ctx, "UPDATE departments SET name=$1 WHERE id=$2", dept.Name, dept.ID)
++	return err
++}
++
++func (r *departmentRepository) Delete(ctx context.Context, id uuid.UUID) error {
++	_, err := r.db.Exec(ctx, "DELETE FROM departments WHERE id=$1", id)
++	return err
++}
