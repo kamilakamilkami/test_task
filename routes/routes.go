@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 	"project/controllers"
-	service "project/internal/service_domain"
+	"project/internal/service"
 	"project/repository"
 
 	"github.com/gorilla/mux"
@@ -25,6 +25,18 @@ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	r.HandleFunc("/departments/{id}", deptHandler.GetByID).Methods("GET")
 	r.HandleFunc("/departments/{id}", deptHandler.Update).Methods("PUT")
 	r.HandleFunc("/departments/{id}", deptHandler.Delete).Methods("DELETE")
+
+	// Employee
+
+	empRepo := repository.NewEmployeeRepository(db)
+	empService := service.NewEmployeeService(empRepo)
+	empHandler := controllers.NewEmployeeHandler(empService)
+
+	r.HandleFunc("/employees", empHandler.Create).Methods("POST")
+	r.HandleFunc("/employees", empHandler.GetAll).Methods("GET")
+	r.HandleFunc("/employees/{id}", empHandler.GetByID).Methods("GET")
+	r.HandleFunc("/employees/{id}", empHandler.Update).Methods("PUT")
+	r.HandleFunc("/employees/{id}", empHandler.Delete).Methods("DELETE")
 
 	//// Usecase-инстансы
 	//userUseCase := user.NewUserUseCase(db)

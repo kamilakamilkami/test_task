@@ -1,6 +1,8 @@
 CREATE TABLE departments (
                              id UUID PRIMARY KEY,
-                             name TEXT NOT NULL
+                             name VARCHAR(100) NOT NULL,
+                             code VARCHAR(50) UNIQUE NOT NULL,
+                             parent_id UUID NULL REFERENCES departments(id) ON DELETE SET NULL
 );
 
 CREATE TABLE positions (
@@ -11,11 +13,23 @@ CREATE TABLE positions (
 
 CREATE TABLE employees (
                            id UUID PRIMARY KEY,
-                           first_name TEXT NOT NULL,
-                           last_name TEXT NOT NULL,
-                           middle_name TEXT,
-                           department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
-                           position_id UUID REFERENCES positions(id) ON DELETE SET NULL
+                           fio VARCHAR(150) NOT NULL,
+                           iin VARCHAR(12) UNIQUE NOT NULL,
+                           email VARCHAR(150) UNIQUE NOT NULL,
+                           phone VARCHAR(50),
+                           birth_date DATE NOT NULL,
+                           employed_at DATE NOT NULL,
+                           terminated_at DATE,
+                           status VARCHAR(20) NOT NULL CHECK (status IN ('ACTIVE','ON_LEAVE','TERMINATED')),
+                           department_id UUID NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
+                           position_id UUID NOT NULL,
+                           grade VARCHAR(50),
+                           employment_type VARCHAR(10) NOT NULL CHECK (employment_type IN ('FULL','PART')),
+                           salary_base NUMERIC(12,2),
+                           salary_currency VARCHAR(10),
+                           work_schedule VARCHAR(100),
+                           manager_id UUID,
+                           created_at TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE contracts (
