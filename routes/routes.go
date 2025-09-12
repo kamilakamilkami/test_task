@@ -38,6 +38,16 @@ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	r.HandleFunc("/employees/{id}", empHandler.Update).Methods("PUT")
 	r.HandleFunc("/employees/{id}", empHandler.Delete).Methods("DELETE")
 
+
+	// Document
+	docRepo := repository.NewDocumentRepository(db)
+	docService := service.NewDocumentService(docRepo)
+	docHandler := controllers.NewDocumentHandler(docService)
+
+	r.HandleFunc("/documents", docHandler.Create).Methods("POST")
+	r.HandleFunc("/documents", docHandler.GetAll).Methods("GET")
+	r.HandleFunc("/documents/{id}", docHandler.GetByID).Methods("GET")
+
 	//// Usecase-инстансы
 	//userUseCase := user.NewUserUseCase(db)
 	//productUseCase := product.NewProductUseCase(db)
