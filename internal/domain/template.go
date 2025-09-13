@@ -17,3 +17,7 @@ type Template struct {
 	CreatedBy   uuid.UUID `json:"createdBy"`
 	CreatedAt   time.Time `json:"createdAt"`
 }
+
+type PreviewRequest struct {
+    Data map[string]interface{} `json:"data"`
+}
