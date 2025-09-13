@@ -14,7 +14,6 @@ import (
 func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	r := mux.NewRouter()
 
-	// Базовый префикс /api/v1
 	api := r.PathPrefix("/api/v1").Subrouter()
 
 	// Department

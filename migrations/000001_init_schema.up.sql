@@ -56,12 +56,3 @@ CREATE TABLE documents (
                            version INT NOT NULL DEFAULT 1
 );
 
-CREATE TABLE users (
-                       id UUID PRIMARY KEY,
-                       name VARCHAR(100) NOT NULL,
-                       email VARCHAR(100) UNIQUE NOT NULL,
-                       password TEXT NOT NULL,
-                       role VARCHAR(20) NOT NULL DEFAULT 'EMPLOYEE', -- ADMIN, HR, MANAGER, EMPLOYEE
-                       created_at TIMESTAMP DEFAULT now(),
-                       updated_at TIMESTAMP DEFAULT now()
-);

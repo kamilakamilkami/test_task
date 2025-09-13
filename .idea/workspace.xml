@@ -6,6 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="01c5f6d6-dddf-42e7-930e-a5f219a33644" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/product_controller.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/000001_init_schema.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/000001_init_schema.up.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/product.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/repository/product_repository.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/routes.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
