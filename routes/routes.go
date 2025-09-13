@@ -59,6 +59,19 @@ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	r.HandleFunc("/auth/login", authHandler.Login).Methods("POST")
 	r.Handle("/auth/refresh", middlewares.RefreshMiddleware(http.HandlerFunc(authHandler.Refresh))).Methods("POST")
 
+
+	// Templates
+
+	templateRepo := repository.NewTemplateRepository(db)
+	templateService := service.NewTemplateService(templateRepo)
+	templateHandler := controllers.NewTemplateHandler(templateService)
+
+	r.HandleFunc("/templates", templateHandler.Create).Methods("POST")
+	r.HandleFunc("/templates", templateHandler.GetAll).Methods("GET")
+	r.HandleFunc("/templates/{id}", templateHandler.GetByID).Methods("GET")
+	r.HandleFunc("/templates/{id}", templateHandler.Update).Methods("PUT")
+	r.HandleFunc("/templates/{id}/preview", templateHandler.Preview).Methods("POST")
+
 	//// Usecase-инстансы
 	//userUseCase := user.NewUserUseCase(db)
 	//productUseCase := product.NewProductUseCase(db)
