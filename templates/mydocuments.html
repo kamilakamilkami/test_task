@@ -11,7 +11,7 @@
   <script>
     async function loadDocuments() {
       try {
-        const response = await fetch("/getmydocuments", {
+        const response = await fetch("/api/v1/getmydocuments", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
