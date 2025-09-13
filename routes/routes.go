@@ -72,6 +72,17 @@ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	r.HandleFunc("/templates/{id}", templateHandler.Update).Methods("PUT")
 	r.HandleFunc("/templates/{id}/preview", templateHandler.Preview).Methods("POST")
 
+
+	// Document
+	docRepo := repository.NewDocumentRepository(db)
+	docService := service.NewDocumentService(docRepo)
+	docHandler := controllers.NewDocumentHandler(docService)
+
+	r.HandleFunc("/documents", docHandler.Create).Methods("POST")
+	r.HandleFunc("/documents", docHandler.GetAll).Methods("GET")
+	r.HandleFunc("/documents/{id}", docHandler.GetByID).Methods("GET")
+
+
 	//// Usecase-инстансы
 	//userUseCase := user.NewUserUseCase(db)
 	//productUseCase := product.NewProductUseCase(db)
