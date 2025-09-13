@@ -4,11 +4,12 @@ import (
 	"net/http"
 	"project/controllers"
 	"project/internal/service"
-	"project/middlewares"
 	"project/repository"
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"project/middlewares"
 )
 
 func SetupRoutes(db *pgxpool.Pool) *mux.Router {
@@ -36,28 +37,6 @@ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	r.HandleFunc("/employees/{id}", empHandler.GetByID).Methods("GET")
 	r.HandleFunc("/employees/{id}", empHandler.Update).Methods("PUT")
 	r.HandleFunc("/employees/{id}", empHandler.Delete).Methods("DELETE")
-
-	// Position
-
-	posRepo := repository.NewPositionRepository(db)
-	posSvc := service.NewPositionService(posRepo)
-	posHandler := controllers.NewPositionHandler(posSvc)
-
-	r.HandleFunc("/positions", posHandler.Create).Methods("POST")
-	r.HandleFunc("/positions", posHandler.GetAll).Methods("GET")
-	r.HandleFunc("/positions/{id}", posHandler.GetByID).Methods("GET")
-	r.HandleFunc("/positions/{id}", posHandler.Update).Methods("PUT")
-	r.HandleFunc("/positions/{id}", posHandler.Delete).Methods("DELETE")
-
-	//Auth
-
-	userRepo := repository.NewUserRepository(db)
-	authSvc := service.NewAuthUseCase(userRepo)
-	authHandler := controllers.NewAuthHandler(authSvc)
-
-	r.HandleFunc("/auth/register", authHandler.Register).Methods("POST")
-	r.HandleFunc("/auth/login", authHandler.Login).Methods("POST")
-	r.Handle("/auth/refresh", middlewares.RefreshMiddleware(http.HandlerFunc(authHandler.Refresh))).Methods("POST")
 
 	//// Usecase-инстансы
 	//userUseCase := user.NewUserUseCase(db)
@@ -88,4 +67,17 @@ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	//r.Handle("/products/{id}", AdminProtected(http.HandlerFunc(productHandler.DeleteProduct))).Methods("DELETE")
 
 	return r
+}
+
+// Middleware обёртки
+func Refresh(h http.HandlerFunc) http.Handler {
+	return middlewares.RefreshMiddleware(h)
+}
+
+func Protected(h http.HandlerFunc) http.Handler {
+	return middlewares.AuthMiddleware(h)
+}
+
+func AdminProtected(h http.HandlerFunc) http.Handler {
+	return middlewares.OnlyAdmin(middlewares.AuthMiddleware(h))
 }
