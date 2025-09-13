@@ -39,31 +39,33 @@
         const includeSalary = document.getElementById("includeSalary").checked;
         const salary = document.getElementById("salary").value;
 
+        // Формируем данные под шаблон
         const data = {
-            fullName,
-            position,
-            department,
-            employedAt,
+            employee: {
+                fullName: fullName,
+                position: position,
+                hireDate: employedAt,
+                salaryBase: includeSalary && salary ? Number(salary) : null,
+                salaryCurrency: "$"
+            },
+            company_name: department || "Компания Х",
+            includeSalary: includeSalary && salary ? true : false,
+            salaryInWords: includeSalary && salary ? convertSalaryToWords(Number(salary)) : "",
+            date: new Date().toISOString().split("T")[0] // формат YYYY-MM-DD
         };
 
-        if (includeSalary && salary) {
-            data.salary = Number(salary);
-        }
-
-        const meta = {
-            expiresInDays: 30
-        };
+        const meta = { expiresInDays: 30 };
 
         const payload = {
             type: "CERTIFICATE",
-            employeeId: "550e8400-e29b-41d4-a716-446655440000",  
+            employeeId: "550e8400-e29b-41d4-a716-446655440000",
             templateId: "46e55e17-5d97-46ab-b2b3-2cf41f2d5e9d",
             templateVersionId: 1,
-            number: "CERT-20250913-002",  
+            number: "CERT-20250913-002",
             date: new Date().toISOString(),
             status: "DRAFT",
             fileId: null,
-            data: JSON.stringify(data),   
+            data: JSON.stringify(data),
             meta: JSON.stringify(meta)
         };
 
@@ -71,10 +73,8 @@
 
         const res = await fetch("/api/v1/documents", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
         });
 
         if (!res.ok) {
@@ -87,6 +87,11 @@
         console.log("Created document:", result);
         alert("Certificate created!");
     });
-  </script>
+
+    function convertSalaryToWords(salary) {
+        return salary + " $"; 
+    }
+    </script>
+
 </body>
 </html>

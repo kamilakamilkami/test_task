@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Preview Certificate</title>
+</head>
+<body>
+    <h1>Employment Certificate</h1>
+
+    <p>Full Name: {{.FullName}}</p>
+    <p>Position: {{.Position}}</p>
+    <p>Department: {{.Department}}</p>
+    <p>Employment Date: {{.EmployedAt}}</p>
+
+    {{if .IncludeSalary}}
+    <p>Salary: {{.Salary}} RUB</p>
+    {{end}}
+
+    <p>Expires in: {{.ExpiresInDays}} days</p>
+
+    <p>
+        <a href="/api/v1/documents/{{.ID}}/file" target="_blank">Download PDF</a>
+    </p>
+</body>
+</html>

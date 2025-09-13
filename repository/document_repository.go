@@ -16,6 +16,7 @@ type DocumentRepository interface {
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.Document, error)
     GetByUserId(ctx context.Context, id string) ([]domain.Document, error)
     GetByDepartmentUserId(ctx context.Context, id string) ([]domain.Document, error)
+    UpdateFileID(ctx context.Context, docID, fileID uuid.UUID) error
 }
 
 type documentRepository struct {
@@ -246,3 +247,10 @@ func (r *documentRepository) GetByDepartmentUserId(
 
     return docs, nil
 }
+
+func (r *documentRepository) UpdateFileID(ctx context.Context, docID, fileID uuid.UUID) error {
+	query := `UPDATE documents SET file_id = $1 WHERE id = $2`
+	_, err := r.db.Exec(ctx, query, fileID, docID)
+	return err
+}
+

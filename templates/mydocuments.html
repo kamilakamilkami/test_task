@@ -32,7 +32,7 @@
           const li = document.createElement("li");
 
           const link = document.createElement("a");
-          link.href = `/documents/${doc.id}`;
+          link.href = `/api/v1/previewcertificate/${doc.id}`;
           link.textContent = `${doc.type} - ${doc.number} (${doc.status})`;
 
           li.appendChild(link);

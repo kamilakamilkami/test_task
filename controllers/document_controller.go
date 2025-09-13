@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"project/internal/domain"
 	"project/internal/service"
@@ -12,9 +14,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
-	"project/middlewares"
 	"html/template"
 	"log"
+	"project/middlewares"
 )
 
 type DocumentHandler struct {
@@ -36,7 +38,7 @@ func (h *DocumentHandler) Create(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    newdoc, err := h.service.Create(r.Context(), &doc, userID) // ✅ правильный контекст
+    newdoc, err := h.service.Create(r.Context(), &doc, userID) 
     if err != nil {
         log.Printf("❌ Create error: %v", err)
         http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -129,16 +131,135 @@ func (h *DocumentHandler) GetMyDocs(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(docs)
 }
 
-// GET /auth/login
+// GET /mydocuments
 func (h *DocumentHandler) GetMyDocumentsPage(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("../templates/mydocuments.html"))
 	tmpl.Execute(w, nil)
 
 }
 
-// GET /auth/login
+// GET /createcertificate
 func (h *DocumentHandler) GetCreateCertificatePage(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("../templates/createcertificate.html"))
 	tmpl.Execute(w, nil)
 
 }
+type PreviewData struct {
+	ID            string
+	FullName      string
+	Position      string
+	Department    string
+	EmployedAt    string
+	Salary        *float64
+	IncludeSalary bool
+	ExpiresInDays int
+}
+
+// GET /previewcertificate
+func (h *DocumentHandler) PreviewCertificatePage(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	id, err := uuid.Parse(params["id"])
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	doc, err := h.service.GetByID(r.Context(), id)
+	if err != nil {
+		http.Error(w, "Document not found", http.StatusNotFound)
+		return
+	}
+
+	var docData map[string]interface{}
+	if err := json.Unmarshal([]byte(doc.Data), &docData); err != nil {
+		http.Error(w, "Invalid document data", http.StatusInternalServerError)
+		return
+	}
+
+	var docMeta map[string]interface{}
+	if err := json.Unmarshal([]byte(doc.Meta), &docMeta); err != nil {
+		http.Error(w, "Invalid document meta", http.StatusInternalServerError)
+		return
+	}
+
+	employeeMap := make(map[string]interface{})
+	if e, ok := docData["employee"].(map[string]interface{}); ok {
+		employeeMap = e
+	}
+
+	fullName, _ := employeeMap["fullName"].(string)
+	position, _ := employeeMap["position"].(string)
+	employedAt, _ := employeeMap["hireDate"].(string)
+	var salary *float64
+	includeSalary := false
+	if val, ok := employeeMap["salaryBase"].(float64); ok {
+		salary = &val
+		includeSalary = true
+	}
+
+	department, _ := docData["department"].(string)
+
+	preview := PreviewData{
+		ID:            doc.ID.String(),
+		FullName:      fullName,
+		Position:      position,
+		Department:    department,
+		EmployedAt:    employedAt,
+		Salary:        salary,
+		IncludeSalary: includeSalary,
+	}
+
+	if expires, ok := docMeta["expiresInDays"].(float64); ok {
+		preview.ExpiresInDays = int(expires)
+	}
+
+	tmpl := template.Must(template.ParseFiles("../templates/preview.html"))
+	if err := tmpl.Execute(w, preview); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+
+func (h *DocumentHandler) DownloadFile(w http.ResponseWriter, r *http.Request) {
+    params := mux.Vars(r)
+    docID, err := uuid.Parse(params["id"])
+    if err != nil {
+        http.Error(w, "Invalid document ID", http.StatusBadRequest)
+        return
+    }
+
+    // Получаем документ
+    doc, err := h.service.GetByID(r.Context(), docID)
+    if err != nil {
+        http.Error(w, "Document not found", http.StatusNotFound)
+        return
+    }
+
+    if doc.FileID == nil {
+        http.Error(w, "PDF not generated yet", http.StatusNotFound)
+        return
+    }
+
+    // Получаем файл из БД
+    file, err := h.service.GetFileByID(r.Context(), *doc.FileID)
+    if err != nil {
+        http.Error(w, "File not found", http.StatusNotFound)
+        return
+    }
+
+    // Декодируем base64 в байты
+    pdfBytes, err := base64.StdEncoding.DecodeString(file.Base64)
+    if err != nil {
+        http.Error(w, "Failed to decode PDF", http.StatusInternalServerError)
+        return
+    }
+
+    // Отдаём пользователю
+    w.Header().Set("Content-Type", file.MimeType)
+    w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%q", file.Name))
+    w.Write(pdfBytes)
+}
+
+
+
