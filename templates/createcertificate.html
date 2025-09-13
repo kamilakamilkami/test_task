@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Certificate</title>
+</head>
+<body>
+  <h1>Create Employment Certificate</h1>
+  <form id="certificateForm">
+      <label>Full Name:</label><br>
+      <input type="text" id="fullName" required><br><br>
+
+      <label>Position:</label><br>
+      <input type="text" id="position" required><br><br>
+
+      <label>Department:</label><br>
+      <input type="text" id="department" required><br><br>
+
+      <label>Employment Date:</label><br>
+      <input type="date" id="employedAt" required><br><br>
+
+      <label>Include Salary?</label>
+      <input type="checkbox" id="includeSalary"><br><br>
+
+      <label>Salary:</label><br>
+      <input type="number" id="salary" step="0.01"><br><br>
+
+      <button type="submit">Generate</button>
+  </form>
+
+  <script>
+    document.getElementById("certificateForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const fullName = document.getElementById("fullName").value;
+        const position = document.getElementById("position").value;
+        const department = document.getElementById("department").value;
+        const employedAt = document.getElementById("employedAt").value;
+        const includeSalary = document.getElementById("includeSalary").checked;
+        const salary = document.getElementById("salary").value;
+
+        const data = {
+            fullName,
+            position,
+            department,
+            employedAt,
+        };
+
+        if (includeSalary && salary) {
+            data.salary = Number(salary);
+        }
+
+        const meta = {
+            expiresInDays: 30
+        };
+
+        const payload = {
+            type: "CERTIFICATE",
+            employeeId: "550e8400-e29b-41d4-a716-446655440000",  
+            templateId: "46e55e17-5d97-46ab-b2b3-2cf41f2d5e9d",
+            templateVersionId: 1,
+            number: "CERT-20250913-002",  
+            date: new Date().toISOString(),
+            status: "DRAFT",
+            fileId: null,
+            data: JSON.stringify(data),   
+            meta: JSON.stringify(meta)
+        };
+
+        console.log("Final payload:", payload);
+
+        const res = await fetch("/api/v1/documents", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+            alert("Error: " + res.status);
+            return;
+        }
+
+        const result = await res.json();
+        window.location.href = "/api/v1/mydocuments";
+        console.log("Created document:", result);
+        alert("Certificate created!");
+    });
+  </script>
+</body>
+</html>

@@ -70,16 +70,18 @@ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	api.HandleFunc("/templates/{id}", templateHandler.Update).Methods("PUT")
 	api.HandleFunc("/templates/{id}/preview", templateHandler.Preview).Methods("POST")
 
+	sequenceRepo := repository.NewNumberSequenceRepository(db)
 	// Documents
 	docRepo := repository.NewDocumentRepository(db)
-	docService := service.NewDocumentService(docRepo)
+	docService := service.NewDocumentService(docRepo, userRepo, templateRepo, sequenceRepo)
 	docHandler := controllers.NewDocumentHandler(docService)
 
-	api.HandleFunc("/documents", docHandler.Create).Methods("POST")
+	api.Handle("/documents", middlewares.AuthMiddleware(http.HandlerFunc(docHandler.Create))).Methods("POST")
 	api.HandleFunc("/documents", docHandler.GetAll).Methods("GET")
 	api.HandleFunc("/documents/{id}", docHandler.GetByID).Methods("GET")
 	api.Handle("/getmydocuments", middlewares.AuthMiddleware(http.HandlerFunc(docHandler.GetMyDocs))).Methods("GET")
 	api.HandleFunc("/mydocuments", docHandler.GetMyDocumentsPage).Methods("GET")
+	api.HandleFunc("/createcertificate", docHandler.GetCreateCertificatePage).Methods("GET")
 
 	//// Usecase-инстансы
 	//userUseCase := user.NewUserUseCase(db)

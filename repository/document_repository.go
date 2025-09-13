@@ -29,8 +29,8 @@ func NewDocumentRepository(db *pgxpool.Pool) DocumentRepository {
 func (r *documentRepository) Create(ctx context.Context, doc *domain.Document) error {
 	_, err := r.db.Exec(ctx,
 		`INSERT INTO documents 
-		(id, type, employee_id, template_id, template_version, number, date, status, file_id, data, meta) 
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, $11)`,
+		(id, type, employee_id, template_id, template_version, number, date, status, file_id, data, meta, department_id) 
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
 		doc.ID,
 		doc.Type,
 		doc.EmployeeID,
@@ -42,6 +42,7 @@ func (r *documentRepository) Create(ctx context.Context, doc *domain.Document) e
 		doc.FileID,
 		doc.Data, 
 		doc.Meta, 
+        doc.DepartmentID,
 	)
 	return err
 }

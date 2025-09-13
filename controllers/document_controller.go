@@ -14,6 +14,7 @@ import (
 
 	"project/middlewares"
 	"html/template"
+	"log"
 )
 
 type DocumentHandler struct {
@@ -26,22 +27,29 @@ func NewDocumentHandler(s service.DocumentService) *DocumentHandler {
 
 // POST /Documents
 func (h *DocumentHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var doc domain.Document
-	if err := json.NewDecoder(r.Body).Decode(&doc); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+    userID := middlewares.GetUserID(r.Context())
 
-	newdoc, err := h.service.Create(context.Background(), &doc)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+    var doc domain.Document
+    if err := json.NewDecoder(r.Body).Decode(&doc); err != nil {
+        log.Printf("❌ Decode error: %v", err)
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(newdoc)
+    newdoc, err := h.service.Create(r.Context(), &doc, userID) // ✅ правильный контекст
+    if err != nil {
+        log.Printf("❌ Create error: %v", err)
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    if err := json.NewEncoder(w).Encode(newdoc); err != nil {
+        log.Printf("❌ Encode response error: %v", err)
+    }
 }
+
 
 // GET /Documents
 func (h *DocumentHandler) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -124,6 +132,13 @@ func (h *DocumentHandler) GetMyDocs(w http.ResponseWriter, r *http.Request) {
 // GET /auth/login
 func (h *DocumentHandler) GetMyDocumentsPage(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("../templates/mydocuments.html"))
+	tmpl.Execute(w, nil)
+
+}
+
+// GET /auth/login
+func (h *DocumentHandler) GetCreateCertificatePage(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("../templates/createcertificate.html"))
 	tmpl.Execute(w, nil)
 
 }

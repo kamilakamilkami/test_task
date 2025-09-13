@@ -16,6 +16,7 @@ type TemplateRepository interface {
 	GetAll(ctx context.Context, docType *string, active *bool) ([]domain.Template, error)
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.Template, error)
 	Update(ctx context.Context, id uuid.UUID, template *domain.Template) (*domain.Template, error)
+    GetByType(ctx context.Context, templateType string) (uuid.UUID, int, error)
 }
 
 type templateRepository struct {
@@ -147,3 +148,25 @@ func (r *templateRepository) Update(ctx context.Context, id uuid.UUID, t *domain
     return &updated, nil
 
 }
+
+func (r *templateRepository) GetByType(ctx context.Context, templateType string) (uuid.UUID, int, error) {
+    var id uuid.UUID
+    var version int
+
+    query := `
+        SELECT id, version
+        FROM templates
+        WHERE type = $1
+          AND is_active = true
+        ORDER BY version DESC
+        LIMIT 1
+    `
+
+    err := r.db.QueryRow(ctx, query, templateType).Scan(&id, &version)
+    if err != nil {
+        return uuid.Nil, 0, err
+    }
+
+    return id, version, nil
+}
+

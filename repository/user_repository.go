@@ -12,6 +12,7 @@ type UserRepository interface {
 	GetByEmail(ctx context.Context, email string) (*models.User, error)
 	Create(ctx context.Context, user *models.User) error
 	CheckExists(ctx context.Context, email string) (bool, error)
+	GetEmployeeIdByUserId(ctx context.Context, userId string) (string, string, error)
 }
 
 type userRepository struct {
@@ -43,3 +44,23 @@ func (r *userRepository) CheckExists(ctx context.Context, email string) (bool, e
 	err := r.db.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM users WHERE email=$1)", email).Scan(&exists)
 	return exists, err
 }
+
+func (r *userRepository) GetEmployeeIdByUserId(ctx context.Context, userId string) (string, string, error) {
+    var employeeID, departmentID string
+
+    query := `
+        SELECT e.id, e.department_id
+        FROM users u
+        JOIN employees e ON e.id = u.employee_id
+        WHERE u.id = $1
+    `
+
+    err := r.db.QueryRow(ctx, query, userId).Scan(&employeeID, &departmentID)
+    if err != nil {
+        return "", "", err
+    }
+
+    return employeeID, departmentID, nil
+}
+
+
