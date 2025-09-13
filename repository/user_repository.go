@@ -4,45 +4,42 @@ import (
 	"context"
 	"project/models"
 
+	_ "github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func GetUserByID(ctx context.Context, db *pgxpool.Pool, id string) *models.User {
+type UserRepository interface {
+	GetByEmail(ctx context.Context, email string) (*models.User, error)
+	Create(ctx context.Context, user *models.User) error
+	CheckExists(ctx context.Context, email string) (bool, error)
+}
+
+type userRepository struct {
+	db *pgxpool.Pool
+}
+
+func NewUserRepository(db *pgxpool.Pool) UserRepository {
+	return &userRepository{db: db}
+}
+
+func (r *userRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
-	query := "SELECT id, name, email, role FROM users WHERE id = $1"
-	err := db.QueryRow(ctx, query, id).Scan(&user.ID, &user.Name, &user.Email, &user.Role)
+	query := "SELECT id, name, email, password, role FROM users WHERE email = $1"
+	err := r.db.QueryRow(ctx, query, email).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return &user
+	return &user, nil
 }
 
-func GetUsers(ctx context.Context, db *pgxpool.Pool) []*models.User {
-	rows, err := db.Query(ctx, "SELECT id, name, email, role FROM users")
-	if err != nil {
-		return nil
-	}
-	defer rows.Close()
-
-	var users []*models.User
-	for rows.Next() {
-		var user models.User
-		if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Role); err != nil {
-			return nil
-		}
-		users = append(users, &user)
-	}
-	return users
-}
-
-func UpdateUser(ctx context.Context, db *pgxpool.Pool, user *models.User) error {
-	query := "UPDATE users SET name = $1, email = $2, role = $3 WHERE id = $4"
-	_, err := db.Exec(ctx, query, user.Name, user.Email, user.Role, user.ID)
+func (r *userRepository) Create(ctx context.Context, user *models.User) error {
+	query := "INSERT INTO users (id, name, email, password, role) VALUES ($1, $2, $3, $4, $5)"
+	_, err := r.db.Exec(ctx, query, user.ID, user.Name, user.Email, user.Password, user.Role)
 	return err
 }
 
-func DeleteUser(ctx context.Context, db *pgxpool.Pool, id string) error {
-	query := "DELETE FROM users WHERE id = $1"
-	_, err := db.Exec(ctx, query, id)
-	return err
+func (r *userRepository) CheckExists(ctx context.Context, email string) (bool, error) {
+	var exists bool
+	err := r.db.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM users WHERE email=$1)", email).Scan(&exists)
+	return exists, err
 }

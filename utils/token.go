@@ -1,103 +1,59 @@
 package utils
 
 import (
-	"errors"
+	"project/dto"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
-	"project/dto"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-var (
-	accessTokenTTL  = 15 * time.Minute
-	refreshTokenTTL = 7 * 24 * time.Hour
-)
-
-func GenerateTokens(email, role, secretKey string) (dto.TokenResponse, error) {
-	accessToken, accessExpiry, err := generateAccessToken(email, role, secretKey)
+func GenerateTokens(email, role, secret string) (dto.TokenResponse, error) {
+	accessToken, accessExpiry, err := GenerateAccessTokenWithExpiry(email, role, secret)
 	if err != nil {
 		return dto.TokenResponse{}, err
 	}
 
-	refreshToken, refreshExpiry, err := generateRefreshToken(email, role, secretKey)
-	if err != nil {
-		return dto.TokenResponse{}, err
-	}
+	refreshToken, _ := GenerateRefreshToken(email, role, secret)
 
 	return dto.TokenResponse{
 		AccessToken:   accessToken,
 		RefreshToken:  refreshToken,
 		AccessExpiry:  accessExpiry,
-		RefreshExpiry: refreshExpiry,
+		RefreshExpiry: time.Now().Add(7 * 24 * time.Hour),
 	}, nil
 }
 
-func generateAccessToken(email, role, secretKey string) (string, time.Time, error) {
-	expiry := time.Now().Add(accessTokenTTL)
-
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["email"] = email
-	claims["role"] = role
-	claims["exp"] = expiry.Unix()
-
-	signedToken, err := token.SignedString([]byte(secretKey))
-	if err != nil {
-		return "", time.Time{}, err
+func GenerateAccessTokenWithExpiry(email, role, secret string) (string, time.Time, error) {
+	exp := time.Now().Add(15 * time.Minute)
+	claims := jwt.MapClaims{
+		"email": email,
+		"role":  role,
+		"exp":   exp.Unix(),
 	}
-
-	return signedToken, expiry, nil
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	t, err := token.SignedString([]byte(secret))
+	return t, exp, err
 }
 
-func generateRefreshToken(email, role, secretKey string) (string, time.Time, error) {
-	expiry := time.Now().Add(refreshTokenTTL)
-
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["email"] = email
-	claims["role"] = role
-	claims["type"] = "refresh"
-	claims["exp"] = expiry.Unix()
-
-	signedToken, err := token.SignedString([]byte(secretKey))
-	if err != nil {
-		return "", time.Time{}, err
+func GenerateRefreshToken(email, role, secret string) (string, error) {
+	exp := time.Now().Add(7 * 24 * time.Hour)
+	claims := jwt.MapClaims{
+		"email": email,
+		"role":  role,
+		"exp":   exp.Unix(),
 	}
-
-	return signedToken, expiry, nil
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(secret))
 }
 
-func ParseToken(tokenString, secretKey string) (jwt.MapClaims, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("unexpected signing method")
-		}
-		return []byte(secretKey), nil
+func ParseToken(tokenStr, secret string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
 	})
-
-	if err != nil {
-		return nil, err
-	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return claims, nil
 	}
 
-	return nil, errors.New("invalid token")
-}
-func GenerateAccessTokenWithExpiry(email, role, secretKey string) (string, time.Time, error) {
-	expiry := time.Now().Add(accessTokenTTL)
-
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["email"] = email
-	claims["role"] = role
-	claims["exp"] = expiry.Unix()
-
-	signedToken, err := token.SignedString([]byte(secretKey))
-	if err != nil {
-		return "", time.Time{}, err
-	}
-
-	return signedToken, expiry, nil
+	return nil, err
 }

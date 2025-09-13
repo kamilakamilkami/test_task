@@ -7,8 +7,8 @@ CREATE TABLE departments (
 
 CREATE TABLE positions (
                            id UUID PRIMARY KEY,
-                           title TEXT NOT NULL,
-                           salary NUMERIC(12,2) NOT NULL
+                           name VARCHAR(255) NOT NULL,
+                           code VARCHAR(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE employees (
@@ -54,4 +54,14 @@ CREATE TABLE documents (
                            content TEXT NOT NULL,
                            created_at TIMESTAMP NOT NULL DEFAULT now(),
                            version INT NOT NULL DEFAULT 1
+);
+
+CREATE TABLE users (
+                       id UUID PRIMARY KEY,
+                       name VARCHAR(100) NOT NULL,
+                       email VARCHAR(100) UNIQUE NOT NULL,
+                       password TEXT NOT NULL,
+                       role VARCHAR(20) NOT NULL DEFAULT 'EMPLOYEE', -- ADMIN, HR, MANAGER, EMPLOYEE
+                       created_at TIMESTAMP DEFAULT now(),
+                       updated_at TIMESTAMP DEFAULT now()
 );
