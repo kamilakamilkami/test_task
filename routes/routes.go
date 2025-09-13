@@ -14,76 +14,71 @@ import (
 func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	r := mux.NewRouter()
 
+	// Базовый префикс /api/v1
+	api := r.PathPrefix("/api/v1").Subrouter()
+
 	// Department
 	deptRepo := repository.NewDepartmentRepository(db)
 	deptService := service.NewDepartmentService(deptRepo)
 	deptHandler := controllers.NewDepartmentHandler(deptService)
 
-	r.HandleFunc("/departments", deptHandler.Create).Methods("POST")
-	r.HandleFunc("/departments", deptHandler.GetAll).Methods("GET")
-	r.HandleFunc("/departments/{id}", deptHandler.GetByID).Methods("GET")
-	r.HandleFunc("/departments/{id}", deptHandler.Update).Methods("PUT")
-	r.HandleFunc("/departments/{id}", deptHandler.Delete).Methods("DELETE")
+	api.HandleFunc("/departments", deptHandler.Create).Methods("POST")
+	api.HandleFunc("/departments", deptHandler.GetAll).Methods("GET")
+	api.HandleFunc("/departments/{id}", deptHandler.GetByID).Methods("GET")
+	api.HandleFunc("/departments/{id}", deptHandler.Update).Methods("PUT")
+	api.HandleFunc("/departments/{id}", deptHandler.Delete).Methods("DELETE")
 
 	// Employee
-
 	empRepo := repository.NewEmployeeRepository(db)
 	empService := service.NewEmployeeService(empRepo)
 	empHandler := controllers.NewEmployeeHandler(empService)
 
-	r.HandleFunc("/employees", empHandler.Create).Methods("POST")
-	r.HandleFunc("/employees", empHandler.GetAll).Methods("GET")
-	r.HandleFunc("/employees/{id}", empHandler.GetByID).Methods("GET")
-	r.HandleFunc("/employees/{id}", empHandler.Update).Methods("PUT")
-	r.HandleFunc("/employees/{id}", empHandler.Delete).Methods("DELETE")
+	api.HandleFunc("/employees", empHandler.Create).Methods("POST")
+	api.HandleFunc("/employees", empHandler.GetAll).Methods("GET")
+	api.HandleFunc("/employees/{id}", empHandler.GetByID).Methods("GET")
+	api.HandleFunc("/employees/{id}", empHandler.Update).Methods("PUT")
+	api.HandleFunc("/employees/{id}", empHandler.Delete).Methods("DELETE")
 
 	// Position
-
 	posRepo := repository.NewPositionRepository(db)
 	posSvc := service.NewPositionService(posRepo)
 	posHandler := controllers.NewPositionHandler(posSvc)
 
-	r.HandleFunc("/positions", posHandler.Create).Methods("POST")
-	r.HandleFunc("/positions", posHandler.GetAll).Methods("GET")
-	r.HandleFunc("/positions/{id}", posHandler.GetByID).Methods("GET")
-	r.HandleFunc("/positions/{id}", posHandler.Update).Methods("PUT")
-	r.HandleFunc("/positions/{id}", posHandler.Delete).Methods("DELETE")
+	api.HandleFunc("/positions", posHandler.Create).Methods("POST")
+	api.HandleFunc("/positions", posHandler.GetAll).Methods("GET")
+	api.HandleFunc("/positions/{id}", posHandler.GetByID).Methods("GET")
+	api.HandleFunc("/positions/{id}", posHandler.Update).Methods("PUT")
+	api.HandleFunc("/positions/{id}", posHandler.Delete).Methods("DELETE")
 
-	//Auth
-
+	// Auth
 	userRepo := repository.NewUserRepository(db)
 	authSvc := service.NewAuthUseCase(userRepo)
 	authHandler := controllers.NewAuthHandler(authSvc)
 
-	r.HandleFunc("/auth/register", authHandler.Register).Methods("POST")
-	r.HandleFunc("/auth/login", authHandler.Login).Methods("POST")
-	r.Handle("/auth/refresh", middlewares.RefreshMiddleware(http.HandlerFunc(authHandler.Refresh))).Methods("POST")
-
-	r.HandleFunc("/auth/login", authHandler.GetLogin).Methods("GET")
-
+	api.HandleFunc("/auth/register", authHandler.Register).Methods("POST")
+	api.HandleFunc("/auth/login", authHandler.Login).Methods("POST")
+	api.Handle("/auth/refresh", middlewares.RefreshMiddleware(http.HandlerFunc(authHandler.Refresh))).Methods("POST")
+	api.HandleFunc("/auth/login", authHandler.GetLogin).Methods("GET")
 
 	// Templates
-
 	templateRepo := repository.NewTemplateRepository(db)
 	templateService := service.NewTemplateService(templateRepo)
 	templateHandler := controllers.NewTemplateHandler(templateService)
 
-	r.HandleFunc("/templates", templateHandler.Create).Methods("POST")
-	r.HandleFunc("/templates", templateHandler.GetAll).Methods("GET")
-	r.HandleFunc("/templates/{id}", templateHandler.GetByID).Methods("GET")
-	r.HandleFunc("/templates/{id}", templateHandler.Update).Methods("PUT")
-	r.HandleFunc("/templates/{id}/preview", templateHandler.Preview).Methods("POST")
+	api.HandleFunc("/templates", templateHandler.Create).Methods("POST")
+	api.HandleFunc("/templates", templateHandler.GetAll).Methods("GET")
+	api.HandleFunc("/templates/{id}", templateHandler.GetByID).Methods("GET")
+	api.HandleFunc("/templates/{id}", templateHandler.Update).Methods("PUT")
+	api.HandleFunc("/templates/{id}/preview", templateHandler.Preview).Methods("POST")
 
-
-	// Document
+	// Documents
 	docRepo := repository.NewDocumentRepository(db)
 	docService := service.NewDocumentService(docRepo)
 	docHandler := controllers.NewDocumentHandler(docService)
 
-	r.HandleFunc("/documents", docHandler.Create).Methods("POST")
-	r.HandleFunc("/documents", docHandler.GetAll).Methods("GET")
-	r.HandleFunc("/documents/{id}", docHandler.GetByID).Methods("GET")
-
+	api.HandleFunc("/documents", docHandler.Create).Methods("POST")
+	api.HandleFunc("/documents", docHandler.GetAll).Methods("GET")
+	api.HandleFunc("/documents/{id}", docHandler.GetByID).Methods("GET")
 
 	//// Usecase-инстансы
 	//userUseCase := user.NewUserUseCase(db)

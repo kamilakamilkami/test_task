@@ -1,0 +1,103 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"ALL\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"01c5f6d6-dddf-42e7-930e-a5f219a33644\" name=\"Changes\" comment=\"\">\r\n      <change afterPath=\"$PROJECT_DIR$/controllers/position_controller.go\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/internal/domain/position.go\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/internal/service/usecase_auth.go\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/internal/service/usecase_position.go\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/repository/position_repository.go\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/controllers/auth_controller.go\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/controllers/auth_controller.go\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/dto/auth_dto.go\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/dto/auth_dto.go\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/go.mod\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/go.mod\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/go.sum\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/go.sum\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/internal/auth/interface.go\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/internal/auth/usecase.go\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/middlewares/auth.go\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/middlewares/auth.go\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/migrations/000001_init_schema.up.sql\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/migrations/000001_init_schema.up.sql\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/repository/auth_repository.go\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/repository/user_repository.go\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/repository/user_repository.go\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/routes/routes.go\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/routes/routes.go\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/utils/token.go\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/utils/token.go\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Go File\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"GOROOT\" url=\"file://$USER_HOME$/go/go1.24.4\" />\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"KubernetesApiPersistence\">{}</component>\r\n  <component name=\"KubernetesApiProvider\">{\r\n  &quot;isMigrated&quot;: true\r\n}</component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 2\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2z8DlVny9xRa1WJQEdsGYXZnCaX\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,\r\n    &quot;Go Build.go build project/cmd.executor&quot;: &quot;Run&quot;,\r\n    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\r\n    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,\r\n    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/Камила/Downloads/idk/idk&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Камила\\Downloads\\idk\\idk\\internal\\domain\" />\r\n      <recent name=\"C:\\Users\\Камила\\Downloads\\idk\\idk\" />\r\n      <recent name=\"C:\\Users\\Камила\\Downloads\\idk\\idk\\internal\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"go build project/cmd\" type=\"GoApplicationRunConfiguration\" factoryName=\"Go Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"idk\" />\r\n      <working_directory value=\"$PROJECT_DIR$\" />\r\n      <kind value=\"PACKAGE\" />\r\n      <package value=\"project/cmd\" />\r\n      <directory value=\"$PROJECT_DIR$\" />\r\n      <filePath value=\"$PROJECT_DIR$/cmd/main.go\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Go Build.go build project/cmd\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-gosdk-3b128438d3f6-4b567d62c776-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-251.26094.127\" />\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-GO-251.26094.127\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"01c5f6d6-dddf-42e7-930e-a5f219a33644\" name=\"Changes\" comment=\"\" />\r\n      <created>1751103957986</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1751103957986</updated>\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"UnknownFeatures\">\r\n    <option featureType=\"com.intellij.fileTypeFactory\" implementationName=\".env\" />\r\n  </component>\r\n  <component name=\"VgoProject\">\r\n    <settings-migrated>true</settings-migrated>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision a77b8ece1a6784bddbf043c49b792ae1a8a3f839)
++++ b/.idea/workspace.xml	(date 1757766008327)
+@@ -5,24 +5,28 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="01c5f6d6-dddf-42e7-930e-a5f219a33644" name="Changes" comment="">
+-      <change afterPath="$PROJECT_DIR$/controllers/position_controller.go" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/internal/domain/position.go" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/internal/service/usecase_auth.go" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/internal/service/usecase_position.go" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/repository/position_repository.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/controllers/document_controller.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/controllers/template_controller.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/internal/domain/doctype.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/internal/domain/document.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/internal/domain/file.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/internal/domain/template.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/internal/service/usecase_document.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/internal/service/usecase_template.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/migrations/000002_create_document_types.down.sql" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/migrations/000002_create_document_types.up.sql" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/migrations/000004_create_templates.down.sql" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/migrations/000004_create_templates.up.sql" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/migrations/000005_alter_documents.down.sql" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/migrations/000005_alter_documents.up.sql" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/migrations/0003_create_files.down.sql" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/migrations/0003_create_files.up.sql" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/repository/document_repository.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/repository/template_repository.go" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/controllers/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/auth_controller.go" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/dto/auth_dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/dto/auth_dto.go" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/internal/auth/interface.go" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/internal/auth/usecase.go" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/middlewares/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/middlewares/auth.go" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/migrations/000001_init_schema.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/000001_init_schema.up.sql" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/repository/auth_repository.go" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/repository/user_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/user_repository.go" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/routes/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/routes.go" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/utils/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/token.go" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -52,28 +56,28 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+-    &quot;Go Build.go build project/cmd.executor&quot;: &quot;Run&quot;,
+-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Камила/Downloads/idk/idk&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "DefaultGoTemplateProperty": "Go File",
++    "Go Build.go build project/cmd.executor": "Run",
++    "ModuleVcsDetector.initialDetectionPerformed": "true",
++    "RunOnceActivity.GoLinterPluginOnboarding": "true",
++    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
++    "RunOnceActivity.git.unshallow": "true",
++    "RunOnceActivity.go.formatter.settings.were.checked": "true",
++    "RunOnceActivity.go.migrated.go.modules.settings": "true",
++    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
++    "git-widget-placeholder": "Merging main",
++    "go.import.settings.migrated": "true",
++    "go.sdk.automatically.set": "true",
++    "last_opened_file_path": "C:/Users/Камила/Downloads/idk/idk",
++    "node.js.detected.package.eslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm"
+   }
+-}</component>
++}]]></component>
+   <component name="RecentsManager">
+     <key name="MoveFile.RECENT_KEYS">
+       <recent name="C:\Users\Камила\Downloads\idk\idk\internal\domain" />

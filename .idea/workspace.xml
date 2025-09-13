@@ -5,24 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="01c5f6d6-dddf-42e7-930e-a5f219a33644" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/controllers/position_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/domain/position.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/service/usecase_auth.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/service/usecase_position.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/repository/position_repository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/auth_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dto/auth_dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/dto/auth_dto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/auth/interface.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/auth/usecase.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/middlewares/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/middlewares/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/000001_init_schema.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/000001_init_schema.up.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/repository/auth_repository.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/repository/user_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/user_repository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/routes.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/token.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +22,11 @@
   </component>
   <component name="GOROOT" url="file://$USER_HOME$/go/go1.24.4" />
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
@@ -120,6 +109,29 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
