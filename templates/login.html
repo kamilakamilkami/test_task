@@ -36,8 +36,12 @@
                 return;
             }
 
+            // токен/куки сервер уже выставит сам
             const tokens = await res.json();
             console.log("Tokens:", tokens);
+
+            // редиректим на /mydocuments
+            window.location.href = "/mydocuments";
         });
     </script>
 </body>

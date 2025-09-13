@@ -38,7 +38,7 @@ func (a *authUseCase) Login(ctx context.Context, req dto.LoginRequest) (dto.Toke
 		return dto.TokenResponse{}, errors.New("invalid password")
 	}
 
-	tokens, err := utils.GenerateTokens(user.Email, user.Role, os.Getenv("JWT_SECRET"))
+	tokens, err := utils.GenerateTokens(user.Email, user.Role, user.ID.String(), os.Getenv("JWT_SECRET"))
 	if err != nil {
 		return dto.TokenResponse{}, err
 	}
@@ -73,8 +73,9 @@ func (a *authUseCase) RefreshToken(ctx context.Context, refreshToken string) (dt
 
 	email := claims["email"].(string)
 	role := claims["role"].(string)
+	userID := claims["id"].(string)
 
-	accessToken, accessExpiry, err := utils.GenerateAccessTokenWithExpiry(email, role, os.Getenv("JWT_SECRET"))
+	accessToken, accessExpiry, err := utils.GenerateAccessTokenWithExpiry(email, role, userID, os.Getenv("JWT_SECRET"))
 	if err != nil {
 		return dto.TokenResponse{}, err
 	}

@@ -40,7 +40,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		// 3. Парсим JWT
-		claims, err := utils.ParseToken(tokenStr, os.Getenv("JWT_SECRET_KEY"))
+		claims, err := utils.ParseToken(tokenStr, os.Getenv("JWT_SECRET"))
 		if err != nil {
 			http.Error(w, "Unauthorized: invalid token", http.StatusUnauthorized)
 			return

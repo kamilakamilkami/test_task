@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Documents</title>
+</head>
+<body>
+  <h1>My Documents</h1>
+  <ul id="docList"></ul>
+
+  <script>
+    async function loadDocuments() {
+      try {
+        const response = await fetch("/getmydocuments", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Ошибка загрузки документов");
+        }
+
+        const docs = await response.json();
+
+        const list = document.getElementById("docList");
+        list.innerHTML = ""; // очистить список
+
+        docs.forEach(doc => {
+          const li = document.createElement("li");
+
+          const link = document.createElement("a");
+          link.href = `/documents/${doc.id}`;
+          link.textContent = `${doc.type} - ${doc.number} (${doc.status})`;
+
+          li.appendChild(link);
+          list.appendChild(li);
+        });
+      } catch (err) {
+        console.error(err);
+        alert("Не удалось загрузить документы");
+      }
+    }
+
+    // вызов при загрузке страницы
+    window.onload = loadDocuments;
+  </script>
+</body>
+</html>

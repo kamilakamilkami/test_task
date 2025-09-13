@@ -55,6 +55,13 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	})
 
+	http.SetCookie(w, &http.Cookie{
+		Name:     "accessToken",
+		Value:    tokens.AccessToken,
+		Path:     "/",
+		HttpOnly: true,
+	})
+
 	_ = json.NewEncoder(w).Encode(tokens)
 }
 

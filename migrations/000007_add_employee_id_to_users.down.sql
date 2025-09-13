@@ -1,0 +1,3 @@
+ALTER TABLE users
+DROP CONSTRAINT IF EXISTS fk_users_employee,
+DROP COLUMN IF EXISTS employee_id;

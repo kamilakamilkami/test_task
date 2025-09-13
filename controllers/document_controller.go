@@ -3,13 +3,18 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"project/internal/domain"
 	"project/internal/service"
 
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"time"
+
+	"project/middlewares"
+	"html/template"
 )
 
 type DocumentHandler struct {
@@ -101,4 +106,27 @@ func (h *DocumentHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(doc)
+}
+
+func (h *DocumentHandler) GetMyDocs(w http.ResponseWriter, r *http.Request) {
+	userID := middlewares.GetUserID(r.Context())
+    role := middlewares.GetUserRole(r.Context())
+	fmt.Println(userID)
+	fmt.Println(role)
+
+	docs, err := h.service.GetMyDocs(context.Background(), userID, role)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	fmt.Println(docs)
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(docs)
+}
+
+// GET /auth/login
+func (h *DocumentHandler) GetMyDocumentsPage(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("../templates/mydocuments.html"))
+	tmpl.Execute(w, nil)
+
 }

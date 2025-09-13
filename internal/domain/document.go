@@ -17,4 +17,5 @@ type Document struct {
 	FileID            *uuid.UUID `json:"fileId,omitempty"`
 	Data              string     `json:"data"`
 	Meta             string     `json:"meta"`
+	DepartmentID	uuid.UUID	`json:"depatmentId"`
 }

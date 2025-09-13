@@ -14,6 +14,8 @@ type DocumentRepository interface {
 	Create(ctx context.Context, emp *domain.Document) error
 	GetAll(ctx context.Context, docType *string, status *string, employeeID *uuid.UUID, from *time.Time, to *time.Time) ([]domain.Document, error)
 	GetByID(ctx context.Context, id uuid.UUID) (*domain.Document, error)
+    GetByUserId(ctx context.Context, id string) ([]domain.Document, error)
+    GetByDepartmentUserId(ctx context.Context, id string) ([]domain.Document, error)
 }
 
 type documentRepository struct {
@@ -153,3 +155,93 @@ func (r *documentRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain
 }
 
 
+
+func (r *documentRepository) GetByUserId(
+    ctx context.Context,
+    userId string,
+) ([]domain.Document, error) {
+
+    query := `
+        SELECT d.id, d.type, d.employee_id, d.template_id, d.template_version, 
+               d.number, d.date, d.status, d.file_id, d.data, d.meta
+        FROM documents d
+        JOIN users u ON u.employee_id = d.employee_id
+        WHERE u.id = $1
+    `
+
+    rows, err := r.db.Query(ctx, query, userId)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var docs []domain.Document
+    for rows.Next() {
+        var doc domain.Document
+        err := rows.Scan(
+            &doc.ID,
+            &doc.Type,
+            &doc.EmployeeID,
+            &doc.TemplateID,
+            &doc.TemplateVersionID,
+            &doc.Number,
+            &doc.Date,
+            &doc.Status,
+            &doc.FileID,
+            &doc.Data,
+            &doc.Meta,
+        )
+        if err != nil {
+            return nil, err
+        }
+        docs = append(docs, doc)
+    }
+
+    return docs, nil
+
+}
+
+func (r *documentRepository) GetByDepartmentUserId(
+    ctx context.Context,
+    userId string,
+) ([]domain.Document, error) {
+    query := `
+        SELECT d.id, d.type, d.employee_id, d.template_id, d.template_version,
+               d.number, d.date, d.status, d.file_id, d.data, d.meta, d.department_id
+        FROM documents d
+        JOIN employees e ON d.department_id = e.department_id
+        JOIN users u ON u.employee_id = e.id
+        WHERE u.id = $1
+    `
+
+    rows, err := r.db.Query(ctx, query, userId)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var docs []domain.Document
+    for rows.Next() {
+        var doc domain.Document
+        err := rows.Scan(
+            &doc.ID,
+            &doc.Type,
+            &doc.EmployeeID,
+            &doc.TemplateID,
+            &doc.TemplateVersionID,
+            &doc.Number,
+            &doc.Date,
+            &doc.Status,
+            &doc.FileID,
+            &doc.Data,
+            &doc.Meta,
+            &doc.DepartmentID,
+        )
+        if err != nil {
+            return nil, err
+        }
+        docs = append(docs, doc)
+    }
+
+    return docs, nil
+}

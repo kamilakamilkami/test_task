@@ -84,7 +84,8 @@ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	r.HandleFunc("/documents", docHandler.GetAll).Methods("GET")
 	r.HandleFunc("/documents/{id}", docHandler.GetByID).Methods("GET")
 
-
+	r.Handle("/getmydocuments", middlewares.AuthMiddleware(http.HandlerFunc(docHandler.GetMyDocs))).Methods("GET")
+	r.HandleFunc("/mydocuments", docHandler.GetMyDocumentsPage).Methods("GET")
 	//// Usecase-инстансы
 	//userUseCase := user.NewUserUseCase(db)
 	//productUseCase := product.NewProductUseCase(db)
