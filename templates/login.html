@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login Page</h1>
+    <form id="loginForm">
+        <label>Email:</label>
+        <input type="email" name="email" required>
+        <br>
+        <label>Password:</label>
+        <input type="password" name="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+
+            const res = await fetch("/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!res.ok) {
+                alert("Ошибка: " + res.status);
+                return;
+            }
+
+            const tokens = await res.json();
+            console.log("Tokens:", tokens);
+        });
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"project/dto"
 	"project/internal/service"
+	"html/template"
 )
 
 type AuthHandler struct {
@@ -80,4 +81,12 @@ func (h *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	})
 
 	_ = json.NewEncoder(w).Encode(tokens)
+}
+
+
+// GET /auth/login
+func (h *AuthHandler) GetLogin(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("../templates/login.html"))
+	tmpl.Execute(w, nil)
+
 }

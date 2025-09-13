@@ -59,6 +59,8 @@ func SetupRoutes(db *pgxpool.Pool) *mux.Router {
 	r.HandleFunc("/auth/login", authHandler.Login).Methods("POST")
 	r.Handle("/auth/refresh", middlewares.RefreshMiddleware(http.HandlerFunc(authHandler.Refresh))).Methods("POST")
 
+	r.HandleFunc("/auth/login", authHandler.GetLogin).Methods("GET")
+
 
 	// Templates
 
