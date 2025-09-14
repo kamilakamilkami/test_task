@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: cert_service
+    ports:
+      - "${PORT}:8080"    
+    env_file:
+      - .env             
+    depends_on:
+      - db
+    volumes:
+      - ./templates:/app/templates
+      - ./.env:/app/.env
+
+
+  db:
+    image: postgres:16
+    container_name: cert_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: hrms
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

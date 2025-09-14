@@ -133,14 +133,14 @@ func (h *DocumentHandler) GetMyDocs(w http.ResponseWriter, r *http.Request) {
 
 // GET /mydocuments
 func (h *DocumentHandler) GetMyDocumentsPage(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("../templates/mydocuments.html"))
+	tmpl := template.Must(template.ParseFiles("templates/mydocuments.html"))
 	tmpl.Execute(w, nil)
 
 }
 
 // GET /createcertificate
 func (h *DocumentHandler) GetCreateCertificatePage(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("../templates/createcertificate.html"))
+	tmpl := template.Must(template.ParseFiles("templates/createcertificate.html"))
 	tmpl.Execute(w, nil)
 
 }
@@ -213,7 +213,7 @@ func (h *DocumentHandler) PreviewCertificatePage(w http.ResponseWriter, r *http.
 		preview.ExpiresInDays = int(expires)
 	}
 
-	tmpl := template.Must(template.ParseFiles("../templates/preview.html"))
+	tmpl := template.Must(template.ParseFiles("templates/preview.html"))
 	if err := tmpl.Execute(w, preview); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
