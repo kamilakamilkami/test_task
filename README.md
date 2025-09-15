@@ -8,8 +8,7 @@ docker compose up
 
 2. Тестирование можно через 3 юзеров
 После поднятия контейнеров перходить надо на api/v1/auth/login
-| Email                                               | Password  | Роль     |
-| --------------------------------------------------- | --------- | -------- |
-| [kamilafake@gmail.com](mailto:kamilafake@gmail.com) | fakepassword | EMPLOYEE |
-| [rizafake@gmail.com](mailto:rizafake@gmail.com)     | fakepassword | ADMIN    |
-| [alishfake@gmail.com](mailto:kamilafake@gmail.com)  | fakepassword | MANAGER  |
+
+- **EMPLOYEE**: kamilafake@gmail.com / fakepassword  
+- **ADMIN**: rizafake@gmail.com / fakepassword  
+- **MANAGER**: alishfake@gmail.com / fakepassword
